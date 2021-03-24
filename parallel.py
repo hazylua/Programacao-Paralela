@@ -6,8 +6,6 @@ from functools import reduce
 
 from multiprocessing import Pool
 
-# pool = Pool(4)
-
 def read(path):
     with open(path, newline='') as f:
         reader = csv.reader(f, delimiter=';')
@@ -52,14 +50,11 @@ def run(pool):
     # Divisão
     data_chunks = list(split(data, 8))
     
-    
-    
     # Mapeia e reduz
     mapper = count
     reducer = merge
     
     mapped = pool.map(mapper, data_chunks)
-    # mapped = map(mapper, data_chunks)
     reduced = reduce(reducer, mapped)
     
     # print(reduced)
