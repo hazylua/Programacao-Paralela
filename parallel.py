@@ -12,13 +12,13 @@ def read(path):
         data = list(reader)
     # for row in data:
     #     print(row[30])
-    return data
+    return data[1:]
 
 # mapper
 def count(rows):
     key_map = Counter()
     for row in rows:
-        key = row[9]
+        key = row[18]
         if key in key_map:
             key_map[key] += 1
         else:
@@ -29,40 +29,32 @@ def count(rows):
 def merge(A, B):
     return A + B
 
-# def check(data_chunks):
-#     add = 0
-#     for data in data_chunks:
-#         key_map = count(data)
-#         if key_map['RIO BRANCO']:
-#             print(key_map['RIO BRANCO'])
-#             add += key_map['RIO BRANCO']
-#     print(add)
-
 def split(data, parts):
     return (data[i::parts] for i in range(parts))
-    
-def run(pool):
-    path = './ac.csv'
-    
-    # Leitura
-    data = read(path)
-    
-    # Divisão
-    data_chunks = list(split(data, 8))
-    
-    # Mapeia e reduz
-    mapper = count
-    reducer = merge
-    
-    mapped = pool.map(mapper, data_chunks)
-    reduced = reduce(reducer, mapped)
-    
-    # print(reduced)
 
 if __name__ == '__main__':
     start = time.time()
-    with Pool(8) as pool:
-        run(pool)
+    
+    num_splits = 4
+    
+    # Leitura
+    path = './mg.csv'
+    data = read(path)
+    
+    # Divisão
+    data_chunks = list(split(data, num_splits))
+    
+    # Definições
+    mapper = count
+    reducer = merge
+    
+    with Pool(num_splits) as pool:
+        mapped = pool.map(mapper, data_chunks)
+        
+    reduced = reduce(reducer, mapped)
+    for key in reduced:
+        print(f'{key}: {reduced[key]}')
+    
     end = time.time()
     print(f'{end - start}')
     
