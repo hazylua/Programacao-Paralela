@@ -10,11 +10,10 @@ def read(path):
     with open(path, newline='') as f:
         reader = csv.reader(f, delimiter=';')
         data = list(reader)
-    # for row in data:
-    #     print(row[30])
+    # Retorna apenas valores menos o header
     return data[1:]
 
-# mapper
+# mapper - Cria um dicionário (Counter) com cada cidade e o número de seus vacinados
 def count(rows):
     key_map = Counter()
     for row in rows:
@@ -25,10 +24,11 @@ def count(rows):
             key_map[key] = 1
     return key_map
 
-# reducer
+# reducer - Retornar a junção dos dicionários
 def merge(A, B):
     return A + B
 
+# divide em partes iguais ou quase iguais
 def split(data, parts):
     return (data[i::parts] for i in range(parts))
 
@@ -38,7 +38,7 @@ if __name__ == '__main__':
     num_splits = 4
     
     # Leitura
-    path = './mg.csv'
+    path = './ac.csv'
     data = read(path)
     
     # Divisão
@@ -52,9 +52,12 @@ if __name__ == '__main__':
         mapped = pool.map(mapper, data_chunks)
         
     reduced = reduce(reducer, mapped)
+    
+    print('\nNúmero de vacinados por muncípio:\n')
     for key in reduced:
         print(f'{key}: {reduced[key]}')
+    print(f'\nTotal: {len(data)}')
     
     end = time.time()
-    print(f'{end - start}')
+    print(f'\nTempo total de execução: {end - start}\n')
     

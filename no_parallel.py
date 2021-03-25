@@ -8,8 +8,7 @@ def read(path):
     with open(path, newline='') as f:
         reader = csv.reader(f, delimiter=';')
         data = list(reader)
-    # for row in data:
-    #     print(row[30])
+    # Retorna apenas valores menos o header
     return data[1:]
 
 # mapper
@@ -50,12 +49,15 @@ def run():
         temp = merge(temp, key_map)
         
     reduced = temp
+    
+    print('\nNúmero de vacinados por muncípio:\n')
     for key in reduced:
         print(f'{key}: {reduced[key]}')
+    print(f'\nTotal: {len(data)}')
     
 if __name__ == '__main__':
     start = time.time()
     run()
     end = time.time()
-    print(f'Total runtime: {end - start}')
+    print(f'\nTempo total de execução: {end - start}\n')
     
